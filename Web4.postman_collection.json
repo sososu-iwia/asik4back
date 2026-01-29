@@ -1,0 +1,111 @@
+{
+  "info": {
+    "name": "Web4 Analytics API",
+    "_postman_id": "7e3a4c1c-8d1d-4b51-9a3f-4f2f7a1d6c2a",
+    "description": "API requests for the Web4 analytical dashboard (measurements, metrics, weather, auth).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"temik\",\n  \"email\": \"temik@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (sets token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch (e) {}",
+                  "if (json && json.token) { pm.environment.set('token', json.token); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"temik\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Verify",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/verify", "host": ["{{baseUrl}}"], "path": ["auth", "verify"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Measurements",
+      "item": [
+        {
+          "name": "Get measurements (date range)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/measurements?field=field1&start_date=2026-01-01&end_date=2026-01-29",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "measurements"],
+              "query": [
+                { "key": "field", "value": "field1" },
+                { "key": "start_date", "value": "2026-01-01" },
+                { "key": "end_date", "value": "2026-01-29" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get metrics",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/measurements/metrics?field=field1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "measurements", "metrics"],
+              "query": [{ "key": "field", "value": "field1" }]
+            }
+          }
+        },
+        {
+          "name": "Record weather (protected)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{baseUrl}}/api/measurements/weather", "host": ["{{baseUrl}}"], "path": ["api", "measurements", "weather"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Almaty\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

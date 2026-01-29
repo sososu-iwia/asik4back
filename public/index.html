@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytical Dashboard</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <div class="side-logo"></div>
+        <div class="side-brand-text">
+          <div class="side-title">Analytical</div>
+          <div class="side-sub">Realtime insights</div>
+        </div>
+      </div>
+
+      <nav class="side-nav">
+        <a class="nav-item active" href="javascript:void(0)">
+          <span class="nav-ico"></span>
+          <span class="nav-txt">Dashboard</span>
+        </a>
+        <a class="nav-item" href="javascript:void(0)">
+          <span class="nav-ico"></span>
+          <span class="nav-txt">Measurements</span>
+        </a>
+        <a class="nav-item" href="javascript:void(0)">
+          <span class="nav-ico"></span>
+          <span class="nav-txt">Metrics</span>
+        </a>
+        <a class="nav-item" href="javascript:void(0)">
+          <span class="nav-ico"></span>
+          <span class="nav-txt">Weather</span>
+        </a>
+      </nav>
+
+      <div class="side-footer card">
+        <div class="side-hint">
+          <div class="hint-dot"></div>
+          <div>
+            <div class="hint-title">Access control</div>
+            <div class="hint-text">Data read + weather write require login.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar card">
+        <div class="topbar-left">
+          <div class="page-title">
+            <h1>Analytical Platform</h1>
+            <p>Real-time measurement insights and metrics</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <span id="userInfo" class="user-pill hidden"></span>
+          <button id="loginBtn" class="btn ghost">Войти</button>
+          <button id="registerBtn" class="btn ghost">Регистрация</button>
+          <button id="logoutBtn" class="btn ghost hidden">Выйти</button>
+        </div>
+      </header>
+
+      <section class="grid-2">
+        <section class="card panel controls">
+          <div class="panel-head">
+            <h2>Фильтры</h2>
+            <span class="chip">Live</span>
+          </div>
+
+          <div class="control-grid">
+            <div class="control-group">
+              <label for="fieldSelect">Select Field</label>
+              <select id="fieldSelect">
+                <option value="field1">Field 1</option>
+                <option value="field2">Field 2</option>
+                <option value="field3">Field 3</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <label for="startDate">Start Date</label>
+              <input type="date" id="startDate" />
+            </div>
+
+            <div class="control-group">
+              <label for="endDate">End Date</label>
+              <input type="date" id="endDate" />
+            </div>
+
+            <div class="control-actions">
+              <button id="updateBtn" class="btn primary">Обновить</button>
+              <div class="mini-note">
+                <span class="mini-dot"></span>
+                Доступ к данным и запись погоды требуют входа.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel weather">
+          <div class="panel-head">
+            <h2>Погода</h2>
+            <span class="chip green">WeatherAPI</span>
+          </div>
+
+          <div class="weather-row">
+            <input type="text" id="cityInput" placeholder="Enter city (e.g. Almaty)" />
+            <button id="weatherBtn" class="btn accent">Record Weather</button>
+          </div>
+
+          <p id="weatherStatus" class="status-msg"></p>
+
+          <div class="weather-tip">
+            <div class="tip-ico"></div>
+            <div class="tip-txt">Запись погоды сохраняет измерение на сервере (нужен JWT).</div>
+          </div>
+        </section>
+      </section>
+      
+
+     
+
+      <div id="errorMessage" class="toast"></div>
+    </div>
+  </div>
+
+  <div id="loginModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Вход</h3>
+        <button id="loginClose" class="btn icon" type="button">✕</button>
+      </div>
+
+      <form id="loginForm" class="modal-form">
+        <div class="field">
+          <label>Username</label>
+          <input id="loginUsername" autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+        </div>
+
+        <button class="btn primary" type="submit">Войти</button>
+      </form>
+
+      <p class="modal-foot">Нет аккаунта? Нажмите «Регистрация» сверху.</p>
+    </div>
+  </div>
+  <div id="registerModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Регистрация</h3>
+        <button id="registerClose" class="btn icon" type="button">✕</button>
+      </div>
+
+      <form id="registerForm" class="modal-form">
+        <div class="field">
+          <label>Username</label>
+          <input id="registerUsername" autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input id="registerEmail" type="email" autocomplete="email" required />
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <input id="registerPassword" type="password" autocomplete="new-password" required />
+        </div>
+
+        <button class="btn primary" type="submit">Создать аккаунт</button>
+      </form>
+
+      <p class="modal-foot">Пароль минимум 6 символов.</p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
